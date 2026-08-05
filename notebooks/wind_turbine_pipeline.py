@@ -68,27 +68,6 @@ print(f"row count: {raw_df.count()}")
 # COMMAND ----------
 
 # MAGIC %md ### 2. Clean
-# MAGIC
-# MAGIC The provided sample data is actually clean (no nulls/outliers) -- see
-# MAGIC the scratch cell below for a small hand-built DataFrame with known bad
-# MAGIC values to develop and sanity-check `clean()` against, without needing
-# MAGIC to touch any files or Volumes. **Delete the scratch cell before final
-# MAGIC submission** -- it's a dev aid, not part of the pipeline.
-
-# COMMAND ----------
-
-# SCRATCH / DEV ONLY -- delete before submitting.
-from pyspark.sql import Row
-
-test_df = spark.createDataFrame([
-    Row(timestamp="2022-03-01 00:00:00", turbine_id=1, wind_speed=10.0, wind_direction=100.0, power_output=2.5),
-    Row(timestamp="2022-03-01 01:00:00", turbine_id=1, wind_speed=11.0, wind_direction=105.0, power_output=None),   # missing value
-    Row(timestamp="2022-03-01 02:00:00", turbine_id=1, wind_speed=12.0, wind_direction=110.0, power_output=999.0), # obvious outlier
-    Row(timestamp="2022-03-01 03:00:00", turbine_id=1, wind_speed=13.0, wind_direction=400.0, power_output=2.8),   # invalid wind_direction (>360)
-    Row(timestamp="2022-03-01 00:00:00", turbine_id=2, wind_speed=9.0,  wind_direction=90.0,  power_output=3.1),
-])
-
-display(clean(test_df))   # once clean() is implemented, inspect the result here first
 
 # COMMAND ----------
 

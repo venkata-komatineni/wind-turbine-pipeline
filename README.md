@@ -1,55 +1,55 @@
-# Wind Turbine Data Pipeline -- POC
+# Wind Turbine Data Pipeline
 
 Colibri Digital take-home technical assessment.
 
-## Problem
+## What it does
 
-(Keep this short -- one or two sentences restating the scenario in your own
-words: cleaning + summarising + anomaly-flagging daily wind turbine
-readings, POC only.)
+Reads turbine CSVs, cleans bad values, works out min/max/avg power per
+turbine per day, flags turbines that look unusual, saves results as tables.
 
-## Design
+## How I cleaned the data
 
-TODO -- describe your actual design once implemented. Suggested shape:
+- Dropped rows with no power_output value.
+- Dropped rows where power_output was negative or above 10 (real values
+  only go up to 4.5, so this catches obviously broken readings).
+- Dropped rows where wind_direction wasn't between 0 and 360.
+- Removed duplicate rows for the same turbine and timestamp.
 
-- **Ingest**: how you read the 3 CSVs, and how you'd handle the
-  "appended daily" nature of the source in production vs. this POC (batch
-  re-read vs. Auto Loader / streaming).
-- **Clean**: what you treat as missing/invalid, and whether you drop or
-  impute, and why.
-- **Summary stats**: what "time period" means in your implementation
-  (calendar day vs rolling 24h) and why.
-- **Anomaly detection**: what population you compute mean/std over
-  (per-turbine over time vs. across the turbine fleet at a point in time),
-  and why you chose that interpretation of "expected power output".
-- **Storage**: what "database" means in this POC (e.g. Delta table) vs.
-  what you'd actually use in production and why.
+## How I calculated stats
+
+Grouped by turbine and day, took min/max/avg of power_output.
+
+## How I found anomalies
+
+Compared each turbine's daily average to the average and standard
+deviation across all turbines/days. Flagged anything more than 2 standard
+deviations away.
 
 ## Assumptions
 
-TODO -- list the calls you made where the brief was ambiguous. E.g.:
-- Valid ranges assumed for wind_direction / power_output and where those
-  numbers came from (data distribution vs. domain knowledge vs. guess).
-- What happens to a turbine group file that's missing entirely for a day.
-- Timezone handling for timestamps.
+- Only treated a missing power_output value as "missing" -- didn't check
+  for whole missing hours.
+- Used simple min/max bounds instead of statistics for cleaning, to keep
+  it separate from anomaly detection.
+- Used the whole fleet's average as the "expected" baseline, not each
+  turbine's own history.
+- "Time period" is a calendar day, not a rolling 24h window.
 
 ## Project structure
 
 ```
 src/pipeline/
-  schema.py      constants + expected schema
+  schema.py      expected schema
   ingest.py      read raw CSVs -> DataFrame
-  clean.py       missing values / outlier handling      <- your logic
-  stats.py       per-turbine min/max/avg over a window   <- your logic
-  anomalies.py   >2 std dev anomaly flagging              <- your logic
-  storage.py     persist cleaned data + stats
+  clean.py       missing values / outlier handling
+  stats.py       per-turbine min/max/avg per day
+  anomalies.py   >2 std dev anomaly flagging
+  storage.py     persist cleaned data + stats as Delta tables
   run.py         CLI orchestration (local or Databricks)
 notebooks/
-  wind_turbine_pipeline.py   Databricks notebook (source format)
+  wind_turbine_pipeline.py   Databricks notebook
 tests/
   test_clean.py / test_stats.py / test_anomalies.py
-scripts/
-  make_dirty_data.py   injects nulls/outliers/dupes for testing
 data/
   data_group_1.csv, data_group_2.csv, data_group_3.csv (provided sample)
 ```
@@ -58,16 +58,11 @@ data/
 
 See `GUIDE.md` for full local + Databricks setup, run, and test instructions.
 
-## Productionising (talking points for follow-up interview)
+## If this went to production
 
-TODO -- jot a few notes for yourself here so you have them ready, e.g.:
-- Replace batch CSV re-read with Databricks Auto Loader / structured
-  streaming for the "appended daily" ingestion pattern.
-- Idempotency / dedup strategy for reprocessing a day (MERGE into Delta on
-  (turbine_id, timestamp)).
-- Data quality checks as a first-class step (e.g. Great Expectations /
-  Delta Live Tables expectations) rather than ad hoc filters.
-- Orchestration + scheduling (Databricks Jobs / Workflows), alerting on
-  anomaly detection, monitoring pipeline SLAs.
-- Partitioning the Delta tables (by date / turbine_id) for query
-  performance at scale.
+- Use Auto Loader instead of re-reading all CSVs each time.
+- Use MERGE so re-running a day doesn't duplicate data.
+- Add monitoring/alerts on anomalies.
+- Talk to someone on the team about whether fleet-wide or per-turbine
+  anomaly detection makes more sense.
+- Partition the Delta tables for query performance at scale.

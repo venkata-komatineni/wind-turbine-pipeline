@@ -1,29 +1,22 @@
 """
-Summary statistics.
+Summary statistics: min/max/avg power output per turbine per day.
 
->>> CORE PIECE #2 -- implement yourself. <<<
-
-Requirement:
-    "Calculates summary statistics: For each turbine, calculate the
-    minimum, maximum, and average power output over a given time period
-    (e.g., 24 hours)."
-
-Things to decide:
-  - Is the "time period" a calendar day, or a trailing/rolling 24h window?
-    Either is defensible for a POC -- pick one, state it.
-  - groupBy + agg is the natural PySpark tool here. Should this run on the
-    cleaned data (probably yes -- cleaning happens first in the pipeline).
+"Time period" is treated as a calendar day, matching the brief's framing of
+data being appended in daily batches.
 """
 
 from pyspark.sql import DataFrame
+from pyspark.sql import functions as F
 
 
-def summary_statistics(df: DataFrame, window: str = "1 day") -> DataFrame:
-    """
-    Return a DataFrame with (turbine_id, window_start, window_end,
-    min_power, max_power, avg_power) -- or whatever column names you
-    prefer, just be consistent and document them.
-
-    TODO: implement.
-    """
-    raise NotImplementedError("Implement your summary statistics logic here")
+def summary_statistics(df: DataFrame) -> DataFrame:
+    return (
+        df
+        .withColumn("day", F.to_date("timestamp"))
+        .groupBy("turbine_id", "day")
+        .agg(
+            F.min("power_output").alias("min_power"),
+            F.max("power_output").alias("max_power"),
+            F.avg("power_output").alias("avg_power"),
+        )
+    )
