@@ -25,14 +25,14 @@
 
 # COMMAND ----------
 
-import sys, os
+# import sys, os
 
 # When opened as a Databricks Repo, the repo root is on sys.path already in
 # newer DBR versions; this line is a safety net for older runtimes / local
 # testing via `databricks-connect`.
-repo_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
-if repo_root not in sys.path:
-    sys.path.append(repo_root)
+# repo_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
+# if repo_root not in sys.path:
+#     sys.path.append(repo_root)
 
 from src.pipeline.ingest import read_raw
 from src.pipeline.clean import clean
