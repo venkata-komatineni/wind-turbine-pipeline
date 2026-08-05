@@ -30,8 +30,7 @@ from pyspark.sql import DataFrame
 def clean(df: DataFrame) -> DataFrame:
     """
     Take the raw ingested DataFrame (see ingest.read_raw) and return a
-    cleaned DataFrame with the same columns (drop `source_file` or keep it,
-    your call).
+    cleaned DataFrame with the same columns.
 
     TODO: implement.
     """
