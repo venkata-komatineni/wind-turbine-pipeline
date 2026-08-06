@@ -3,8 +3,8 @@ Anomaly detection: flags turbine-days whose average power output is more
 than 2 standard deviations from the fleet's average (computed across all
 turbines/days in the stats DataFrame).
 
-"Expected power output" is read here as fleet-wide behaviour -- turbines in
-the same farm see broadly similar wind, so a turbine deviating from the
+"Expected power output" is read here as fleet-wide behaviour
+turbines in the same farm see broadly similar wind, so a turbine deviating from the
 rest of the fleet is treated as the anomaly signal, rather than deviating
 from its own historical average.
 """

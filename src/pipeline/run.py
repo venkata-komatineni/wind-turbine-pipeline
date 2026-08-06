@@ -1,14 +1,8 @@
 """
 End-to-end orchestration: ingest -> clean -> stats -> anomalies -> store.
 
-This is intentionally thin -- once you've implemented clean.py, stats.py and
-anomalies.py, this should "just work". Run it from the Databricks notebook
-(see notebooks/wind_turbine_pipeline.py) or locally with:
-
     python -m src.pipeline.run --data-dir data --local
 
-Add CLI args / config as you see fit -- this is a minimal starting point,
-not a prescription.
 """
 
 import argparse
@@ -20,7 +14,6 @@ from .clean import clean
 from .stats import summary_statistics
 from .anomalies import flag_anomalies
 from .storage import write_table
-
 
 def main(data_dir: str, local: bool):
     spark = (
@@ -41,7 +34,7 @@ def main(data_dir: str, local: bool):
     print("=== anomalies ===")
     anomalies_df.show(20, truncate=False)
 
-    as_delta = not local  # Delta needs the delta-spark package locally; see GUIDE.md
+    as_delta = not local  # Delta needs the delta-spark package locally
     write_table(cleaned_df,
                 "output/turbine_readings_clean" if local else "turbine_readings_clean",
                 as_delta_table=as_delta)

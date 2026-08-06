@@ -1,8 +1,7 @@
 """
 Summary statistics: min/max/avg power output per turbine per day.
 
-"Time period" is treated as a calendar day, matching the brief's framing of
-data being appended in daily batches.
+Day in timestamp column is treated as a calendar day, the data being appended in daily batches.
 """
 
 from pyspark.sql import DataFrame

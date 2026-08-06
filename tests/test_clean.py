@@ -1,7 +1,10 @@
 """
-Tests for clean.py -- covers each rule the function enforces: null
-power_output, out-of-range power_output, out-of-range wind_direction, and
-duplicate (turbine_id, timestamp) rows.
+Tests for clean.py
+Covers each rule the function enforces: 
+    - null power_output
+    - out-of-range power_output
+    - out-of-range wind_direction
+    - duplicate (turbine_id, timestamp) rows.
 """
 
 from pyspark.sql import Row

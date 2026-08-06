@@ -1,14 +1,17 @@
 """
 Data cleaning.
 
-Cleans the raw turbine readings before they go into summary statistics /
-anomaly detection: drops missing readings, drops physically invalid values
-(negative or unrealistically high power output, out-of-range wind
-direction), and drops duplicate (turbine_id, timestamp) rows.
+Cleans the raw turbine readings data before they go into summary statistics.
 
-Bounds are based on the observed data: real power_output values range
-1.5-4.5, so 0-10 is used as a generous ceiling that still catches obvious
-bad readings without being tuned to the exact sample range.
+Remove the missing values data from the raw data - power_output and remove the
+physically invalid values (negative or unrealistic power output, out-of-range
+wind direction). Drops duplicate records based on turbine_id-timestamp pairs.
+
+Bounds are based on the observed data: 
+real power_output values range 1.5-4.5, so 0-10 is used as a generous ceiling - Bad power_output readings are
+dropped. 
+
+Wind direction is bounded by 0-360 degrees.
 """
 
 from pyspark.sql import DataFrame

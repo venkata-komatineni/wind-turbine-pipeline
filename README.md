@@ -4,8 +4,11 @@ Colibri Digital take-home technical assessment.
 
 ## What it does
 
-Reads turbine CSVs, cleans bad values, works out min/max/avg power per
-turbine per day, flags turbines that look unusual, saves results as tables.
+- Reads turbine CSV files
+- Cleans bad values.
+- Works out min/max/avg power per turbine per day.
+- Flags turbines that look unusual.
+- Saves results as tables.
 
 ## How I cleaned the data
 
@@ -17,7 +20,7 @@ turbine per day, flags turbines that look unusual, saves results as tables.
 
 ## How I calculated stats
 
-Grouped by turbine and day, took min/max/avg of power_output.
+Grouped by turbine and day and took min/max/avg of power_output.
 
 ## How I found anomalies
 
@@ -27,7 +30,7 @@ deviations away.
 
 ## Assumptions
 
-- Only treated a missing power_output value as "missing" -- didn't check
+- Only treated a missing power_output value as "missing" 
   for whole missing hours.
 - Used simple min/max bounds instead of statistics for cleaning, to keep
   it separate from anomaly detection.
@@ -48,21 +51,13 @@ src/pipeline/
   run.py         CLI orchestration (local or Databricks)
 notebooks/
   wind_turbine_pipeline.py   Databricks notebook
-tests/
-  test_clean.py / test_stats.py / test_anomalies.py
 data/
   data_group_1.csv, data_group_2.csv, data_group_3.csv (provided sample)
 ```
 
-## How to run
 
-See `GUIDE.md` for full local + Databricks setup, run, and test instructions.
-
-## If this went to production
+## Productionize suggestions 
 
 - Use Auto Loader instead of re-reading all CSVs each time.
 - Use MERGE so re-running a day doesn't duplicate data.
-- Add monitoring/alerts on anomalies.
-- Talk to someone on the team about whether fleet-wide or per-turbine
-  anomaly detection makes more sense.
 - Partition the Delta tables for query performance at scale.

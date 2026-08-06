@@ -1,41 +1,27 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Wind Turbine Data Pipeline -- POC
+# MAGIC # Wind Turbine Data Pipeline - POC
 # MAGIC
 # MAGIC Colibri Digital take-home assessment.
 # MAGIC
 # MAGIC This notebook is the entry point. It imports the `src/pipeline` modules
 # MAGIC and walks through: ingest -> clean -> summary stats -> anomaly detection
-# MAGIC -> store. The actual logic lives in `src/pipeline/*.py` so it's testable
-# MAGIC with pytest outside the notebook too (see tests/).
+# MAGIC -> store. 
+# MAGIC
+# MAGIC The actual logic lives in `src/pipeline/*.py` 
 # MAGIC
 # MAGIC **How to run this on Databricks:**
 # MAGIC 1. Add this repo to your workspace via *Repos > Add Repo* (Databricks Repos
 # MAGIC    supports Git-backed repos and lets notebooks import local `.py` modules
 # MAGIC    directly, no packaging needed).
-# MAGIC 2. Upload the `data/*.csv` files to a Unity Catalog Volume (DBFS isn't
-# MAGIC    available on Free Edition -- Volumes are the supported option; see
+# MAGIC 2. Upload the `data/*.csv` files to a Unity Catalog Volume - Volumes are the supported option; see
 # MAGIC    cell below).
 # MAGIC 3. Free Edition is serverless-only -- just run all cells, no cluster to
 # MAGIC    attach.
 
 # COMMAND ----------
 
-# MAGIC %md ### 0. Setup: make `src/` importable and point at the data
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC If you've just edited a `src/pipeline/*.py` file and re-running a cell
-# MAGIC still shows the *old* behaviour, Python has the old module cached from
-# MAGIC an earlier import in this session. Uncomment and run the line below,
-# MAGIC then re-run the import cell and whichever stage cell you're working on.
-
-# COMMAND ----------
-
-# dbutils.library.restartPython()
-
-# COMMAND ----------
+#  dbutils.library.restartPython()
 
 from src.pipeline.ingest import read_raw
 from src.pipeline.clean import clean
@@ -43,17 +29,19 @@ from src.pipeline.stats import summary_statistics
 from src.pipeline.anomalies import flag_anomalies
 from src.pipeline.storage import write_table
 
+
+
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC Upload the CSVs from the repo's `data/` folder to a Unity Catalog Volume
-# MAGIC (Catalog > pick/create a catalog+schema > Create > Volume > Upload).
+# MAGIC
 # MAGIC Set `DATA_DIR` below to the resulting path, e.g.
 # MAGIC `/Volumes/workspace/default/wind_turbine_data`.
 
 # COMMAND ----------
 
-DATA_DIR = "/Volumes/workspace/default/wind_turbine_data"   # <-- change to your actual Volume path
+DATA_DIR = "/Volumes/workspace/default/wind_turbine_data"  
 
 # COMMAND ----------
 
